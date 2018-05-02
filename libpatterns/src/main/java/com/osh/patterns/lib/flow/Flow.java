@@ -1,34 +1,35 @@
 package com.osh.patterns.lib.flow;
 
-import com.osh.patterns.lib.handlers.Callable;
+import com.osh.patterns.lib.handlers.Action;
+import com.osh.patterns.lib.handlers.Consumer;
 import com.osh.patterns.lib.handlers.Executor;
 import com.osh.patterns.lib.handlers.Job;
 import com.osh.patterns.lib.handlers.Provider;
-import com.osh.patterns.lib.handlers.data.ErrorHandler;
+import com.osh.patterns.lib.handlers.data.ErrorConsumer;
 
 /**
  * Created by Oleg Shatava on 30.04.18.
  */
 
-public class Flow<Result, Data> implements Callable<Data> {
+public class Flow<Result, Data> implements Action<Data> {
     private final Job<Result, Data> job;
-    private Callable<Result> resultHandler;
     private Provider<Executor> jobExecutorProvider;
     private Provider<Executor> resultExecutorProvider;
-    private ErrorHandler errorHandler;
+    private ErrorConsumer errorConsumer;
+    private Consumer<Result> resultHandler;
     private Runnable onCompleted;
     private Flow root;
-    private Callable<Result> next;
+    private Action<Result> next;
 
     private Flow(Job<Result, Data> job, Flow root,
                  Provider<Executor> jobExecutorProvider,
                  Provider<Executor> resultExecutorProvider,
-                 ErrorHandler errorHandler) {
+                 ErrorConsumer errorConsumer) {
         this.root = root;
         this.job = job;
         this.jobExecutorProvider = jobExecutorProvider;
         this.resultExecutorProvider = resultExecutorProvider;
-        this.errorHandler = errorHandler;
+        this.errorConsumer = errorConsumer;
     }
 
     public Flow(Job<Result, Data> job) {
@@ -41,8 +42,8 @@ public class Flow<Result, Data> implements Callable<Data> {
         return item;
     }
 
-    public Flow<Result, Data> onError(ErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
+    public Flow<Result, Data> onError(ErrorConsumer errorConsumer) {
+        this.errorConsumer = errorConsumer;
         return this;
     }
 
@@ -56,7 +57,7 @@ public class Flow<Result, Data> implements Callable<Data> {
         return this;
     }
 
-    public Flow<Result, Data> onData(Callable<Result> resultHandler) {
+    public Flow<Result, Data> onData(Consumer<Result> resultHandler) {
         this.resultHandler = resultHandler;
         return this;
     }
@@ -68,7 +69,7 @@ public class Flow<Result, Data> implements Callable<Data> {
 
     public <T> Flow<T, Result> next(Job<T, Result> job) {
         Flow<T, Result> item = new Flow<>(job, root, jobExecutorProvider,
-                resultExecutorProvider, errorHandler);
+                resultExecutorProvider, errorConsumer);
         this.next = item;
         return item;
     }
@@ -79,8 +80,8 @@ public class Flow<Result, Data> implements Callable<Data> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Callable<T> getCall() {
-        return (Callable<T>) root;
+    public <T> Action<T> getCall() {
+        return (Action<T>) root;
     }
 
     private void run(final Data data) {
@@ -90,14 +91,14 @@ public class Flow<Result, Data> implements Callable<Data> {
             try {
                 Result result = job.make(data);
                 if (resultHandler != null) {
-                    resultExecutor.execute(() -> resultHandler.call(result));
+                    resultExecutor.execute(() -> resultHandler.accept(result));
                 }
                 if (next != null) {
                     next.call(result);
                 }
             } catch (Exception e) {
-                if (errorHandler != null)
-                    resultExecutor.execute(() -> errorHandler.call(e));
+                if (errorConsumer != null)
+                    resultExecutor.execute(() -> errorConsumer.accept(e));
                 else
                     throw e;
             }

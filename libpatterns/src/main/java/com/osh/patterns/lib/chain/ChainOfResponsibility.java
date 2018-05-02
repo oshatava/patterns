@@ -3,7 +3,7 @@ package com.osh.patterns.lib.chain;
 import com.osh.patterns.lib.annotations.NonNull;
 import com.osh.patterns.lib.handlers.Mapper;
 import com.osh.patterns.lib.handlers.actions.RequestHandler;
-import com.osh.patterns.lib.handlers.data.ErrorHandler;
+import com.osh.patterns.lib.handlers.data.ErrorConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
 public class ChainOfResponsibility<A, B> {
 
     private final List<ChainItem<A, B>> chainItems = new ArrayList<>();
-    private final ErrorHandler onError;
+    private final ErrorConsumer onError;
 
-    private ChainOfResponsibility(@NonNull List<ChainItem<A, B>> chainItems, ErrorHandler onError) {
+    private ChainOfResponsibility(@NonNull List<ChainItem<A, B>> chainItems, ErrorConsumer onError) {
         this.onError = onError;
         this.chainItems.addAll(chainItems);
     }
@@ -35,7 +35,7 @@ public class ChainOfResponsibility<A, B> {
                 }
             } catch (Exception e) {
                 if (onError != null) {
-                    onError.call(e);
+                    onError.accept(e);
                     break;
                 } else {
                     throw e;
@@ -49,7 +49,7 @@ public class ChainOfResponsibility<A, B> {
 
         private final List<ChainItem<A, B>> chainItems = new ArrayList<>();
         private Mapper<A, B> defaultItemProcessor;
-        private ErrorHandler onError;
+        private ErrorConsumer onError;
 
         public Builder<A, B> first(@NonNull final RequestHandler<B> handler,
                                    @NonNull final Mapper<A, B> processor) {
@@ -68,7 +68,7 @@ public class ChainOfResponsibility<A, B> {
             return this;
         }
 
-        public Builder<A, B> onError(ErrorHandler onError) {
+        public Builder<A, B> onError(ErrorConsumer onError) {
             this.onError = onError;
             return this;
         }

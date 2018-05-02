@@ -1,6 +1,6 @@
 package sample.patterns.com.osh.sampleapppatterns.utils;
 
-import com.osh.patterns.lib.handlers.data.ErrorHandler;
+import com.osh.patterns.lib.handlers.data.ErrorConsumer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,14 +11,14 @@ import java.util.Date;
 
 public class Log {
 
-    private static ErrorHandler errorHandler = t -> d(t.toString());
+    private static ErrorConsumer errorConsumer = t -> d(t.toString());
 
     private Log() {
         throw new IllegalStateException("Not intended for create new instance");
     }
 
-    public static ErrorHandler onError() {
-        return errorHandler;
+    public static ErrorConsumer onError() {
+        return errorConsumer;
     }
 
     public static void d(String log) {
