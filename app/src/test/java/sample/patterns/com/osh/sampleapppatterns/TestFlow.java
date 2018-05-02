@@ -5,6 +5,9 @@ import com.osh.patterns.lib.handlers.Callable;
 
 import org.junit.Test;
 
+import java.util.UUID;
+
+import sample.patterns.com.osh.sampleapppatterns.utils.Entities;
 import sample.patterns.com.osh.sampleapppatterns.utils.Log;
 import sample.patterns.com.osh.sampleapppatterns.utils.Threads;
 
@@ -17,8 +20,8 @@ public class TestFlow {
     @Test
     public void test() {
 
-        String userId = "12sadf";
-        String photoUrl = "aaaaaa";
+        final String userId = UUID.randomUUID().toString();
+        final String photoUrl = "http:/pictures.net/a.jpg";
 
         Callable<String> action = Flow.first(this::getUserById)
                 .executeOn(Threads.singleThread())
@@ -39,92 +42,36 @@ public class TestFlow {
 
         action.call(userId);
 
-        Threads.sleep(20000);
+        Threads.loop(20000);
     }
 
-    private void onPhotoSaved(UserLocal userLocal) {
+    private void onPhotoSaved(Entities.UserLocal userLocal) {
         Log.d("onPhotoSaved");
     }
 
-    private UserRemote getUserById(String id) {
-        Log.d("getUserById - " + id);
-        Threads.sleep(3000);
-        return new UserRemote(id, id, null);
+    private Entities.UserRemote getUserById(String id) {
+        Log.d("start getUserById");
+        Threads.sleep(1000);
+        return new Entities.UserRemote(id, "Jhon", "jd@mail.com", null);
     }
 
-
-    private UserRemote savePhotoToUserRemote(UserRemote user, String dataUrl) {
-        Log.d("savePhotoToUserRemote - " + dataUrl);
-        Threads.sleep(3000);
-        user.photo = new Photo(dataUrl);
+    private Entities.UserRemote savePhotoToUserRemote(Entities.UserRemote user, String dataUrl) {
+        Log.d("start savePhotoToUserRemote");
+        Threads.sleep(1000);
+        user.setPhoto(new Entities.Photo(dataUrl));
         return user;
     }
 
-    private UserLocal mapUserRemoteToUserLocal(UserRemote userRemote) {
-        Log.d("mapUserRemoteToUserLocal");
-        Threads.sleep(3000);
-        return new UserLocal(userRemote.email, userRemote.name, userRemote.email);
+    private Entities.UserLocal mapUserRemoteToUserLocal(Entities.UserRemote userRemote) {
+        Log.d("start mapUserRemoteToUserLocal");
+        Threads.sleep(1000);
+        return Entities.mapperLocalUserToRemoteUser.map(userRemote);
     }
 
-    private UserLocal saveUserLocally(UserLocal user) {
-        Log.d("saveUserLocally");
-        Threads.sleep(3000);
+    private Entities.UserLocal saveUserLocally(Entities.UserLocal user) {
+        Log.d("start saveUserLocally");
+        Threads.sleep(1000);
         return user;
-    }
-
-
-    private static class UserRemote {
-        final String name;
-        final String email;
-        Photo photo;
-
-        private UserRemote(String name, String email, Photo photo) {
-            this.name = name;
-            this.email = email;
-            this.photo = photo;
-        }
-
-        public void setPhoto(Photo photo) {
-            this.photo = photo;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + " name:" + name + " email:" + email;
-        }
-
-    }
-
-    private static class UserLocal {
-
-        final String id;
-        final String name;
-        final String email;
-
-        private UserLocal(String id, String name, String email) {
-            this.id = id;
-            this.name = name;
-            this.email = email;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + " id:" + id + " name:" + name + " email:" + email;
-        }
-    }
-
-    private static class Photo {
-        final String photoUrl;
-
-        private Photo(String photoUrl) {
-            this.photoUrl = photoUrl;
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + " photoUrl:" + photoUrl;
-        }
-
     }
 
 }

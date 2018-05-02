@@ -13,6 +13,10 @@ public class Log {
 
     private static ErrorHandler errorHandler = t -> d(t.toString());
 
+    private Log() {
+        throw new IllegalStateException("Not intended for create new instance");
+    }
+
     public static ErrorHandler onError() {
         return errorHandler;
     }

@@ -89,11 +89,11 @@ public class Flow<Result, Data> implements Callable<Data> {
         jobExecutor.execute(() -> {
             try {
                 Result result = job.make(data);
-                if (next != null) {
-                    next.call(result);
-                }
                 if (resultHandler != null) {
                     resultExecutor.execute(() -> resultHandler.call(result));
+                }
+                if (next != null) {
+                    next.call(result);
                 }
             } catch (Exception e) {
                 if (errorHandler != null)

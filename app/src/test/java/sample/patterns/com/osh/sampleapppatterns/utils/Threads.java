@@ -3,18 +3,24 @@ package sample.patterns.com.osh.sampleapppatterns.utils;
 import com.osh.patterns.lib.handlers.Executor;
 import com.osh.patterns.lib.handlers.Provider;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Oleg Shatava on 01.05.18.
  */
 
 public class Threads {
-    private final static ScheduledExecutorService mainThread = Executors.newSingleThreadScheduledExecutor();
-    private final static ScheduledExecutorService workerThread = Executors.newSingleThreadScheduledExecutor();
-    private static Provider<Executor> resultExecutorProvider = () -> (Executor) mainThread::execute;
-    private static Provider<Executor> jobExecutorProviderS = () -> (Executor) workerThread::execute;
+    private static final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
+    private static final ExecutorService workerThread = Executors.newFixedThreadPool(8);
+    private static final Provider<Executor> jobExecutorProviderS = () -> (Executor) workerThread::execute;
+    private static final Provider<Executor> resultExecutorProvider = () -> (Executor) queue::add;
+
+    private Threads() {
+        throw new IllegalStateException("Not intended for create new instance");
+    }
 
     public static Provider<Executor> singleThread() {
         return jobExecutorProviderS;
@@ -24,11 +30,26 @@ public class Threads {
         return resultExecutorProvider;
     }
 
-    public static void sleep(long sec) {
+    public static void sleep(long msec) {
         try {
-            Thread.sleep(sec);
+            Thread.sleep(msec);
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void loop(long workTime) {
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < workTime) {
+            sleep(0);
+            if (queue.isEmpty())
+                continue;
+            try {
+                Runnable task = queue.take();
+                task.run();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
