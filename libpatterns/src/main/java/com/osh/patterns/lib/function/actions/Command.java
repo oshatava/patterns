@@ -1,7 +1,7 @@
-package com.osh.patterns.lib.handlers.actions;
+package com.osh.patterns.lib.function.actions;
 
-import com.osh.patterns.lib.handlers.Consumer;
-import com.osh.patterns.lib.handlers.data.ErrorConsumer;
+import com.osh.patterns.lib.function.Consumer;
+import com.osh.patterns.lib.function.data.ErrorConsumer;
 
 /**
  * Created by Oleg Shatava on 30.04.18.

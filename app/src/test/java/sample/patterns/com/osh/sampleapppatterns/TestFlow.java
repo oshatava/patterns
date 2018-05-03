@@ -2,8 +2,8 @@ package sample.patterns.com.osh.sampleapppatterns;
 
 import com.osh.patterns.lib.flow.Flow;
 import com.osh.patterns.lib.flow.Flow1;
-import com.osh.patterns.lib.handlers.Action;
-import com.osh.patterns.lib.handlers.actions.Command;
+import com.osh.patterns.lib.function.Action;
+import com.osh.patterns.lib.function.actions.Command;
 
 import org.junit.Test;
 
@@ -67,7 +67,7 @@ public class TestFlow {
             final String photoUrl = data.getPhotoUrl();
             Flow1.given(userId)
                     .executeOn(Threads.singleThread())
-                    .resultOn(Threads.mainThread())
+                    .consumeOn(Threads.mainThread())
                     .onError(errorConsumer)
                     .next(repository::getUserById)
                     .next(userRemote -> repository.savePhotoToUserRemote(userRemote, photoUrl))

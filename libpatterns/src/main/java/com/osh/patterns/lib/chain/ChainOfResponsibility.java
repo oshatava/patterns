@@ -1,9 +1,9 @@
 package com.osh.patterns.lib.chain;
 
 import com.osh.patterns.lib.annotations.NonNull;
-import com.osh.patterns.lib.handlers.Mapper;
-import com.osh.patterns.lib.handlers.actions.RequestHandler;
-import com.osh.patterns.lib.handlers.data.ErrorConsumer;
+import com.osh.patterns.lib.function.Mapper;
+import com.osh.patterns.lib.function.actions.RequestHandler;
+import com.osh.patterns.lib.function.data.ErrorConsumer;
 
 import java.util.ArrayList;
 import java.util.List;

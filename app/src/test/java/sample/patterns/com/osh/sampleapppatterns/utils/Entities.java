@@ -1,6 +1,6 @@
 package sample.patterns.com.osh.sampleapppatterns.utils;
 
-import com.osh.patterns.lib.handlers.Mapper;
+import com.osh.patterns.lib.function.Mapper;
 
 /**
  * Created by Oleg Shatava on 02.05.18.

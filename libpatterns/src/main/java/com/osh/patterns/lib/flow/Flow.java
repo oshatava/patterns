@@ -1,11 +1,11 @@
 package com.osh.patterns.lib.flow;
 
-import com.osh.patterns.lib.handlers.Action;
-import com.osh.patterns.lib.handlers.Consumer;
-import com.osh.patterns.lib.handlers.Executor;
-import com.osh.patterns.lib.handlers.Job;
-import com.osh.patterns.lib.handlers.Provider;
-import com.osh.patterns.lib.handlers.data.ErrorConsumer;
+import com.osh.patterns.lib.function.Action;
+import com.osh.patterns.lib.function.Consumer;
+import com.osh.patterns.lib.function.Executor;
+import com.osh.patterns.lib.function.Job;
+import com.osh.patterns.lib.function.Provider;
+import com.osh.patterns.lib.function.data.ErrorConsumer;
 
 /**
  * Created by Oleg Shatava on 30.04.18.

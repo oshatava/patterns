@@ -1,11 +1,11 @@
 package com.osh.patterns.lib.flow;
 
-import com.osh.patterns.lib.handlers.Consumer;
-import com.osh.patterns.lib.handlers.Executor;
-import com.osh.patterns.lib.handlers.Job;
-import com.osh.patterns.lib.handlers.Mapper;
-import com.osh.patterns.lib.handlers.Provider;
-import com.osh.patterns.lib.handlers.data.ErrorConsumer;
+import com.osh.patterns.lib.function.Consumer;
+import com.osh.patterns.lib.function.Executor;
+import com.osh.patterns.lib.function.Job;
+import com.osh.patterns.lib.function.Mapper;
+import com.osh.patterns.lib.function.Provider;
+import com.osh.patterns.lib.function.data.ErrorConsumer;
 
 /**
  * Created by Oleg Shatava on 30.04.18.
@@ -55,7 +55,7 @@ public class Flow1<T> {
         return this;
     }
 
-    public Flow1<T> resultOn(Provider<Executor> resultExecutorProvider) {
+    public Flow1<T> consumeOn(Provider<Executor> resultExecutorProvider) {
         this.resultExecutorProvider = resultExecutorProvider;
         return this;
     }
@@ -73,6 +73,10 @@ public class Flow1<T> {
     public Flow1<T> onCompleted(Runnable onCompleted) {
         this.onCompleted = onCompleted;
         return this;
+    }
+
+    public void run() {
+        root.runNext();
     }
 
     private void notifyOnCompleted() {
@@ -114,9 +118,5 @@ public class Flow1<T> {
                 next.notifyOnError(e);
             }
         });
-    }
-
-    public void run() {
-        root.runNext();
     }
 }

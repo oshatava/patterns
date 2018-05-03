@@ -1,7 +1,7 @@
 package sample.patterns.com.osh.sampleapppatterns.utils;
 
-import com.osh.patterns.lib.handlers.Executor;
-import com.osh.patterns.lib.handlers.Provider;
+import com.osh.patterns.lib.function.Executor;
+import com.osh.patterns.lib.function.Provider;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

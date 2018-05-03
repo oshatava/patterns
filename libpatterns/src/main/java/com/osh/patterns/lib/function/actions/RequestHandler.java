@@ -1,6 +1,6 @@
-package com.osh.patterns.lib.handlers.actions;
+package com.osh.patterns.lib.function.actions;
 
-import com.osh.patterns.lib.handlers.Mapper;
+import com.osh.patterns.lib.function.Mapper;
 
 /**
  * Created by Oleg Shatava call 30.04.18.

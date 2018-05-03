@@ -1,6 +1,6 @@
 package sample.patterns.com.osh.sampleapppatterns.utils;
 
-import com.osh.patterns.lib.handlers.data.ErrorConsumer;
+import com.osh.patterns.lib.function.data.ErrorConsumer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
